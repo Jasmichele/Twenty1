@@ -1,0 +1,19 @@
+﻿@model Twenty1.Models.CardViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<h3>The Current Deck id is @Model.deck_id</h3>
+
+<p>You have @Model.remaining cards in your deck</p>
+
+<p>
+    <a class="btn btn-default" href="@Url.Action("NewGame", "Game", new { Hand = Model.cards })">PLAY</a>
+</p>
+
+@*@foreach (var card in Model.cards)
+{
+    <img src="@card.image" />
+}*@

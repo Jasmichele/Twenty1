@@ -1,0 +1,11 @@
+﻿@model Twenty1.Models.CardViewModel
+@{
+    ViewBag.Title = "DrawACard";
+}
+
+<h2>DrawACard</h2>
+
+<p>
+    <a class="btn btn-default" href="@Url.Action("NewGame", "Game", new { cards = Model.cards })">PLAY</a>
+</p>
+

@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p id="newGame"></p>
+
+@*<input type="button" value="New Game" onclick="" />*@
+
+<script>
+    var deal = Object();
+
+    $(document).ready( function() { 
+        $.get("@Url.Action("GetNewDeck", "Home")",
+            function (response) {
+                console.log(response);
+                deal = ko.mapping.fromJS(response);
+                ko.applyBindings(response);
+            });
+    });
+
+    function getNewGame() {
+        $.get("https://deckofcardsapi.com/api/deck/<<deck_id>>/draw/?count=2")
+    }
+</script>
