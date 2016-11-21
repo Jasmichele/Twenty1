@@ -1,0 +1,12 @@
+﻿@model Twenty1.Models.Person
+@{
+    ViewBag.Title = "Hit";
+}
+
+<h2>Hit</h2>
+
+
+@foreach (var card in Model.Hand)
+{
+    <img src="@card.image" />
+}

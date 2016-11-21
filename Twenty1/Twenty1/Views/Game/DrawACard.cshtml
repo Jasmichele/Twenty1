@@ -5,7 +5,11 @@
 
 <h2>DrawACard</h2>
 
-<p>
+@*<p>
     <a class="btn btn-default" href="@Url.Action("NewGame", "Game", new { cards = Model.cards })">PLAY</a>
-</p>
+</p>*@
 
+@foreach(var card in Model.cards)
+{
+    <img src="@card.image" />
+}

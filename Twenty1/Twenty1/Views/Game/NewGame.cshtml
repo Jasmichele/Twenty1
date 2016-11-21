@@ -3,11 +3,14 @@
     ViewBag.Title = "NewGame";
 }
 
-@*<p>
-    <a class="btn btn-default" href="@Url.Action("DrawACard", "Game", new { deck_id = Model.deck_id })">PLAY</a>
-</p>*@
+
 
 @foreach (var card in Model.Hand)
 {
     <img src="@card.image" />
 }
+
+
+<p>
+        <a class="btn btn-default" href="@Url.Action("Hit", "Game", new { deck_id = Model.deck_id })">HIT</a>
+ </

@@ -75,7 +75,7 @@ namespace Twenty1.Controllers
 
             HttpResponseMessage response = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
 
-            HttpResponseMessage response1 = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
+            //HttpResponseMessage response1 = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
 
             if (response.IsSuccessStatusCode)
             {
@@ -85,32 +85,48 @@ namespace Twenty1.Controllers
                 player.Hand = new List<Card>();
                 player.Hand.Add(newG.cards[0]);
                 player.Name = "Player";
+                player.deck_id = newG.deck_id;
+                player.HandValue();
 
                 return View(player);
             }
-            if (response1.IsSuccessStatusCode)
-            {
-                var responseData = response.Content.ReadAsStringAsync().Result;
-                CardViewModel newG = JsonConvert.DeserializeObject<CardViewModel>(responseData);
+            //if (response1.IsSuccessStatusCode)
+            //{
+            //    var responseData = response.Content.ReadAsStringAsync().Result;
+            //    CardViewModel newG = JsonConvert.DeserializeObject<CardViewModel>(responseData);
 
-                dealer.Hand = new List<Card>();
-                dealer.Hand.Add(newG.cards[0]);
-                dealer.Name = "Dealer";
+            //    dealer.Hand = new List<Card>();
+            //    dealer.Hand.Add(newG.cards[0]);
+            //    dealer.Name = "Dealer";
 
-                return View(dealer);
-            }
+            //    return View(dealer);
+            //}
 
-            return View("Error");
+            //return View("Error");
 
         }
 
-        public async Task<ActionResult> Display()
+        public async Task<ActionResult> Hit()
         {
-            CardViewModel pcvm = new CardViewModel();
 
-            player.Hand = pcvm.cards;
+            var deckId = Request.QueryString["deck_id"];
 
-            return View(pcvm);
+            HttpResponseMessage response = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = response.Content.ReadAsStringAsync().Result;
+                CardViewModel newG2 = JsonConvert.DeserializeObject<CardViewModel>(responseData);
+
+                
+           
+                player.Hand.Add(newG2.cards[1]);
+                player.Name = "Player";
+
+                return View(player);
+            }
+
+            return View("Error");
         }
     }
 }

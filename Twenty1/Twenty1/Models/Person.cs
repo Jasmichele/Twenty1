@@ -12,6 +12,8 @@ namespace Twenty1.Models
 
         public List<Card> Hand { get; set; }
 
+        public string deck_id { get; set; }
+
         public int HandValue()
         {
             int returnValue = 0;
@@ -33,6 +35,7 @@ namespace Twenty1.Models
                     default:
                         int num;
                         int.TryParse(c.value, out num);
+                        returnValue = returnValue + num;
                         break;
                 }
             }
