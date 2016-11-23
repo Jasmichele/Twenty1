@@ -8,11 +8,9 @@ namespace Twenty1.Models
 
     public class Person
     {
-        public string Name { get; set; }
-
         public List<Card> Hand { get; set; }
 
-        public string deck_id { get; set; }
+
 
         public int HandValue()
         {

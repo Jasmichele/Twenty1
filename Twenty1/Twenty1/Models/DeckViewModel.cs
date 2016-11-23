@@ -7,7 +7,9 @@ namespace Twenty1.Models
 {
     public class DeckViewModel
     {
-        public Deck myDeck { get; set; }
-        public List<Card> Cards { get; set; }
+        public bool success { get; set; }
+        public List<Card> cards { get; set; }
+        public string deck_id { get; set; }
+        public int remaining { get; set; }
     }
 }

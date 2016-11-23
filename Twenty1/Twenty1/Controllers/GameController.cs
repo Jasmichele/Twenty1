@@ -1,132 +1,107 @@
-﻿using Twenty1.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Twenty1.Models;
 
 namespace Twenty1.Controllers
 {
     public class GameController : Controller
     {
         HttpClient client = new HttpClient();
-
         string url = "https://deckofcardsapi.com/api/deck";
-
-        CardViewModel cvm = new CardViewModel();
-        Person player = new Person();
-        Person dealer = new Person();
+        Deck currentDeck;
 
         public GameController()
         {
             client.BaseAddress = new Uri(url);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            cvm.cards = new List<Card>();
         }
 
         public async Task<ActionResult> Index()
         {
-            if (cvm.deck_id == null)
-            {
-                HttpResponseMessage response = await client.GetAsync(url + "/new/shuffle/?deck_count=1");
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseData = response.Content.ReadAsStringAsync().Result;
-                    Deck deck = JsonConvert.DeserializeObject<Deck>(responseData);
 
-                    cvm.deck_id = deck.deck_id;
-                    cvm.remaining = deck.remaining;
-
-                    return View(cvm);
-                }
-                return View("Error");
-            }
-            return View(cvm);
-        }
-
-        public async Task<ActionResult> DrawACard()
-        {
-            var deckId = Request.QueryString["deck_id"];
-
-            HttpResponseMessage response = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
-
+            HttpResponseMessage response = await client.GetAsync(url + "/new/shuffle/?deck_count=1");
             if (response.IsSuccessStatusCode)
             {
                 var responseData = response.Content.ReadAsStringAsync().Result;
-                CardViewModel cvm2 = JsonConvert.DeserializeObject<CardViewModel>(responseData);
 
-                cvm.cards.Add(cvm2.cards[0]);
-                cvm.deck_id = cvm2.deck_id;
-                cvm.remaining = cvm2.remaining;
-
-                return View(cvm);
+                currentDeck = JsonConvert.DeserializeObject<Deck>(responseData);
+                return View(currentDeck);
             }
             return View("Error");
         }
 
         public async Task<ActionResult> NewGame()
         {
+            CardViewModel game = new CardViewModel();
 
+            game.deck_id = Request.QueryString["deck_id"];
+            game.Dealer = new Person();
+            game.Player = new Person();
+            game.Dealer.Hand = new List<Card>();
+            game.Player.Hand = new List<Card>();
 
-            var deckId = Request.QueryString["deck_id"];
-
-            HttpResponseMessage response = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
-
-            //HttpResponseMessage response1 = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
-
-            if (response.IsSuccessStatusCode)
+            for (int i = 0; i < 2; i++)
             {
-                var responseData = response.Content.ReadAsStringAsync().Result;
-                CardViewModel newG = JsonConvert.DeserializeObject<CardViewModel>(responseData);
-
-                player.Hand = new List<Card>();
-                player.Hand.Add(newG.cards[0]);
-                player.Name = "Player";
-                player.deck_id = newG.deck_id;
-                player.HandValue();
-
-                return View(player);
+                game.Dealer.Hand.Add(await Hit(game.deck_id));
+                game.Player.Hand.Add(await Hit(game.deck_id));
             }
-            //if (response1.IsSuccessStatusCode)
-            //{
-            //    var responseData = response.Content.ReadAsStringAsync().Result;
-            //    CardViewModel newG = JsonConvert.DeserializeObject<CardViewModel>(responseData);
 
-            //    dealer.Hand = new List<Card>();
-            //    dealer.Hand.Add(newG.cards[0]);
-            //    dealer.Name = "Dealer";
-
-            //    return View(dealer);
-            //}
-
-            //return View("Error");
-
+            Session["gameSession"] = game;
+            return View(game);
         }
 
-        public async Task<ActionResult> Hit()
+        public async Task<Card> Hit(string deckId)
         {
-
-            var deckId = Request.QueryString["deck_id"];
-
             HttpResponseMessage response = await client.GetAsync(url + "/" + deckId + "/draw/?count=1");
 
             if (response.IsSuccessStatusCode)
             {
                 var responseData = response.Content.ReadAsStringAsync().Result;
-                CardViewModel newG2 = JsonConvert.DeserializeObject<CardViewModel>(responseData);
+                var drawnCard = JsonConvert.DeserializeObject<DeckViewModel>(responseData);
 
-                
-           
-                player.Hand.Add(newG2.cards[1]);
-                player.Name = "Player";
+                if (drawnCard.remaining == 0)
+                    RedirectToAction("Index");
 
-                return View(player);
+                return drawnCard.cards[0];
             }
 
-            return View("Error");
+            return null;
         }
+
+        [HttpPost]
+        public async Task<ActionResult> NewGame(string stay, string hit)
+        {
+            CardViewModel game = (CardViewModel)Session["gameSession"];
+            if (hit != null)
+            {
+                game.Player.Hand.Add(await Hit(game.deck_id));
+                return View(game);
+            }
+            if (stay != null)
+            {
+                while (game.Dealer.HandValue() <= 15)
+                {
+                    game.Dealer.Hand.Add(await Hit(game.deck_id));
+                
+                }
+                var gameOver = true;
+
+                while(!gameOver)
+                {
+                    while(game.Player.HandValue )
+                }
+                return View(game);
+            }
+            else
+                return View(game);
+        }
+
+
     }
 }

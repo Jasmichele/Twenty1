@@ -5,12 +5,12 @@ using System.Web;
 
 namespace Twenty1.Models
 {
-    public class CardViewModel
+    public class GameViewModel
     {
-        public string deck_id { get; set; }
-        public Person Player { get; set; }
-        public Person Dealer { get; set; }
-        public int remaining { get; set; }
+        public Deck deck_id { get; set; }
 
+        public Person Dealer { get; set; }
+
+        public Person Player { get; set; }
     }
 }

@@ -1,16 +1,32 @@
-﻿@model Twenty1.Models.Person
+﻿@model Twenty1.Models.CardViewModel
 @{
     ViewBag.Title = "NewGame";
 }
 
 
-
-@foreach (var card in Model.Hand)
+@using (Html.BeginForm())
 {
-    <img src="@card.image" />
+    <h2>Player's Hand</h2>
+    <br />
+    <br />
+    foreach(var c in Model.Player.Hand)
+    {
+        <img src="@c.image" />
+    }
+    <br />
+    <p>
+        <input type="submit" value="HIT" name="hit" />
+        <br />
+        <input type="submit" value="STAY" name="stay" />
+    </p>
+    <br />
+    <br />
+    <h3>Dealer's Hand</h3>
+    <br />
+    <br />
+    foreach(var c in Model.Dealer.Hand)
+    {
+        <img src="@c.image" />
+    }
 }
 
-
-<p>
-        <a class="btn btn-default" href="@Url.Action("Hit", "Game", new { deck_id = Model.deck_id })">HIT</a>
- </
